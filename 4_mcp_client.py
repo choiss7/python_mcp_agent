@@ -2,7 +2,7 @@ import sys
 import asyncio
 import streamlit as st
 import json
-from openai.types.responses import ResponseTextDeltaEvent
+from openai.types.chat import ChatCompletionMessageParam
 from agents import Agent, Runner
 from agents.mcp import MCPServerStdio
 from dotenv import load_dotenv
@@ -60,12 +60,14 @@ async def process_user_message():
 
     async for event in result.stream_events():
         # LLM 응답 토큰 스트리밍
-        if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
-            response_text += event.data.delta or ""
+        if event.type == "raw_response_event":
+            if hasattr(event.data, 'content'):
+                response_text += event.data.content or ""
+            elif hasattr(event.data, 'delta'):
+                response_text += event.data.delta or ""
             with placeholder.container():
                 with st.chat_message("assistant"):
                     st.markdown(response_text)
-
 
         # 도구 이벤트와 메시지 완료 처리
         elif event.type == "run_item_stream_event":

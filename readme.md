@@ -1,6 +1,6 @@
 # 파이썬으로 MCP Agent 만들기
 
-YouTube 검색, 요약, 채널 분석 기능을 갖춘 유튜브 에이전트를 MCP로 구현한 예제입니다.
+YouTube 검색, 요약, 채널 분석 기능을 갖춘 유튜브 에이전트와 GitHub 통합 기능을 MCP로 구현한 예제입니다.
 
 
 ## MCP (Model Context Protocol) 소개
@@ -23,23 +23,23 @@ YouTube 검색, 요약, 채널 분석 기능을 갖춘 유튜브 에이전트를
     ```
 2. [OpenAI 키 발급](https://github.com/dabidstudio/dabidstudio_guides/blob/main/get-openai-api-key.md)
 3. [YouTube Data API Key 발급](https://github.com/dabidstudio/dabidstudio_guides/blob/main/get-youtube-data-api.md)
-4. .env.example를 복사한 후 API 키를 입력하고 .env로 저장
+4. [GitHub Personal Access Token 발급](https://docs.github.com/ko/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+5. .env.example를 복사한 후 API 키를 입력하고 .env로 저장
 
     ```bash
     OPENAI_API_KEY=api키_입력
     YOUTUBE_API_KEY=api_키_입력
+    GITHUB_TOKEN=github_토큰_입력
     ```
 
-5. [파이썬 가상환경 설정](https://github.com/dabidstudio/dabidstudio_guides/blob/main/python-set-venv.md)
+6. [파이썬 가상환경 설정](https://github.com/dabidstudio/dabidstudio_guides/blob/main/python-set-venv.md)
     ```bash
     python -m venv venv
     venv\Scripts\activate # Mac은 source venv/bin/activate  
      ```
-6. 패키지 설치
-
-
+7. 패키지 설치
     ```bash
-    pip install mcp openai-agents streamlit youtube-transcript-api python-dotenv
+    pip install -r requirements.txt
     ```
 
 
@@ -101,4 +101,44 @@ python-mcp-agent/
 ├── 4_mcp_client.py                # Streamlit MCP Client 예제
 ├── .env.example                   # 환경변수 예제 파일
 └── mcp.json                       # MCP 서버 설정 파일
+```
+
+## GitHub 통합 기능
+
+GitHub 관련 작업을 수행할 수 있는 기능이 추가되었습니다. 다음과 같은 기능들을 사용할 수 있습니다:
+
+1. 저장소 생성
+2. 파일 생성 및 업데이트
+3. 이슈 생성
+4. 풀 리퀘스트 생성
+
+### 사용 예시
+
+```python
+from github_integration import GitHubIntegration
+
+# GitHub 통합 객체 생성
+github = GitHubIntegration()
+
+# 새로운 저장소 생성
+repo = github.create_repository(
+    name="test-repo",
+    description="테스트 저장소입니다.",
+    private=True
+)
+
+# 파일 생성
+github.create_or_update_file(
+    repo_name="test-repo",
+    file_path="README.md",
+    content="# 테스트 저장소\n\n이 저장소는 테스트를 위해 생성되었습니다.",
+    commit_message="README.md 파일 생성"
+)
+
+# 이슈 생성
+github.create_issue(
+    repo_name="test-repo",
+    title="첫 번째 이슈",
+    body="이것은 테스트 이슈입니다."
+)
 ```
